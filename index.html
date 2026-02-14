@@ -1,323 +1,331 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Viaje confirmado ✈️</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
-<title>Viaje confirmado ✈️</title>
+    <style>
+        * { box-sizing: border-box; }
 
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+        body {
+            margin: 0;
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(#87ceeb, #dff6ff);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            /* Usa dvh para móviles para evitar problemas con la barra de navegación */
+            min-height: 100dvh;
+            width: 100vw;
+            overflow: hidden;
+            padding: 20px;
+        }
 
-<style>
+        /* Nubes ambiente */
+        .cloud {
+            position: fixed;
+            font-size: 3rem;
+            opacity: .4;
+            animation: cloudMove linear infinite;
+            pointer-events: none;
+        }
+        .cloud:nth-child(1) { top: 10%; left: -10%; animation-duration: 40s; }
+        .cloud:nth-child(2) { top: 30%; animation-duration: 55s; }
+        .cloud:nth-child(3) { top: 50%; animation-duration: 50s; }
 
-body{
-margin:0;
-font-family:Poppins,sans-serif;
-background:linear-gradient(#87ceeb,#dff6ff);
-display:flex;
-align-items:center;
-justify-content:center;
-height:100vh;
-overflow:hidden;
-}
+        @keyframes cloudMove { to { transform: translateX(120vw); } }
 
-/* nube ambiente */
+        /* Pista */
+        .runway {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            height: 60px;
+            background: #444;
+            z-index: 1;
+        }
+        .runway::after {
+            content: "";
+            position: absolute;
+            top: 50%;
+            width: 200%;
+            height: 4px;
+            background: repeating-linear-gradient(90deg, white 0 30px, transparent 30px 60px);
+            animation: runwayMove 1s linear infinite;
+        }
+        @keyframes runwayMove { to { transform: translateX(-60px); } }
 
-.cloud{
-position:fixed;
-font-size:3rem;
-opacity:.4;
-animation:cloudMove linear infinite;
-}
-.cloud:nth-child(1){top:10%;left:-10%;animation-duration:40s;}
-.cloud:nth-child(2){top:30%;animation-duration:55s;}
-.cloud:nth-child(3){top:50%;animation-duration:50s;}
+        /* Cabina en vuelo */
+        .cabin {
+            position: fixed;
+            inset: 0;
+            background: radial-gradient(circle, #2c3e50, #000);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 1s;
+            z-index: 2000;
+            text-align: center;
+            padding: 20px;
+        }
 
-@keyframes cloudMove{to{transform:translateX(120vw);}}
+        .map {
+            font-size: 3rem;
+            animation: mapMove 6s linear infinite;
+            opacity: .8;
+            margin-top: 20px;
+        }
 
-/* pista */
+        @keyframes mapMove {
+            0%, 100% { transform: translateX(-30px); }
+            50% { transform: translateX(30px); }
+        }
 
-.runway{
-position:fixed;
-bottom:0;
-width:100%;
-height:70px;
-background:#444;
-}
-.runway::after{
-content:"";
-position:absolute;
-top:50%;
-width:200%;
-height:6px;
-background:repeating-linear-gradient(90deg,white 0 30px,transparent 30px 60px);
-animation:runwayMove 1s linear infinite;
-}
-@keyframes runwayMove{to{transform:translateX(-60px);}}
+        /* Contenedor principal */
+        .container {
+            background: rgba(255, 255, 255, .95);
+            border-radius: 25px;
+            padding: 25px;
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+            position: relative;
+            z-index: 10;
+            transition: all 0.3s ease;
+        }
 
-/* cabina */
+        h1 { 
+            color: #2c3e50; 
+            font-size: 1.4rem; 
+            margin-top: 0;
+        }
 
-.cabin{
-position:fixed;
-inset:0;
-background:radial-gradient(circle,#2c3e50,#000);
-color:white;
-display:flex;
-align-items:center;
-justify-content:center;
-flex-direction:column;
-opacity:0;
-pointer-events:none;
-transition:opacity 1s;
-}
+        .buttons-container {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            align-items: center;
+            margin-top: 20px;
+            /* Evita que los botones rompan el diseño al crecer */
+            overflow: visible; 
+        }
 
-.map{
-font-size:3rem;
-animation:mapMove 6s linear infinite;
-opacity:.8;
-}
+        button {
+            padding: 15px;
+            border: none;
+            border-radius: 40px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            max-width: 220px;
+            font-size: 1rem;
+            transition: transform 0.2s;
+        }
 
-@keyframes mapMove{
-0%{transform:translateX(-50px);}
-50%{transform:translateX(50px);}
-100%{transform:translateX(-50px);}
-}
+        #btnSi { background: #2ecc71; color: white; position: relative; z-index: 100; }
+        #btnNo { background: #e74c3c; color: white; }
 
-/* contenedor principal */
+        .hidden { display: none !important; }
 
-.container{
-background:rgba(255,255,255,.95);
-border-radius:25px;
-padding:30px;
-width:460px;
-max-width:95%;
-text-align:center;
-box-shadow:0 20px 40px rgba(0,0,0,.15);
-}
+        /* Boarding pass final */
+        .boarding {
+            background: white;
+            border-radius: 18px;
+            padding: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            border: 2px dashed #3498db;
+        }
 
-h1{color:#2c3e50;}
+        .boarding h2 { font-size: 1rem; color: #3498db; margin-top: 0; }
+        .boarding p { margin: 5px 0; font-size: 0.9rem; }
 
-.buttons-container{
-display:flex;
-flex-direction:column;
-gap:12px;
-align-items:center;
-}
+        /* Avión */
+        .plane {
+            position: fixed;
+            font-size: 3rem;
+            left: 5%;
+            bottom: 70px;
+            opacity: 0;
+            z-index: 5;
+            pointer-events: none;
+        }
+        .fly { animation: flyPlane 2.5s ease-out forwards; }
+        @keyframes flyPlane {
+            0% { opacity: 1; transform: scale(1); }
+            100% { transform: translate(120vw, -100vh) rotate(25deg) scale(0.5); opacity: 0.5; }
+        }
 
-button{
-padding:14px;
-border:none;
-border-radius:40px;
-font-weight:600;
-cursor:pointer;
-width:200px;
-}
+        /* Humo */
+        .smoke {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            background: white;
+            border-radius: 50%;
+            opacity: .7;
+            z-index: 4;
+            animation: smokeFade 1s linear forwards;
+        }
+        @keyframes smokeFade { to { transform: scale(4); opacity: 0; } }
 
-#btnSi{background:#2ecc71;color:white;}
-#btnNo{background:#e74c3c;color:white;}
+        /* Contador */
+        .countdown {
+            position: fixed;
+            font-size: 6rem;
+            color: white;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-shadow: 0 0 20px rgba(0,0,0,0.5);
+            z-index: 1500;
+        }
 
-.hidden{display:none;}
-
-/* boarding pass final */
-
-.boarding{
-background:white;
-border-radius:18px;
-padding:25px;
-box-shadow:0 10px 25px rgba(0,0,0,.2);
-animation:pop 1s infinite alternate;
-}
-
-@keyframes pop{to{transform:scale(1.05);}}
-
-/* avión */
-
-.plane{
-position:fixed;
-font-size:3rem;
-left:5%;
-bottom:80px;
-opacity:0;
-}
-.fly{animation:flyPlane 2.5s ease-out forwards;}
-@keyframes flyPlane{
-0%{opacity:1;}
-100%{transform:translate(120vw,-80vh) rotate(20deg);}
-}
-
-/* humo */
-
-.smoke{
-position:fixed;
-width:12px;
-height:12px;
-background:white;
-border-radius:50%;
-opacity:.7;
-animation:smokeFade 1.2s linear forwards;
-}
-@keyframes smokeFade{to{transform:scale(4);opacity:0;}}
-
-/* contador */
-
-.countdown{
-position:fixed;
-font-size:5rem;
-color:white;
-top:40%;
-left:50%;
-transform:translate(-50%,-50%);
-text-shadow:0 0 10px black;
-}
-
-</style>
+    </style>
 </head>
 
 <body>
 
-<div class="cloud">☁️</div>
-<div class="cloud">☁️</div>
-<div class="cloud">☁️</div>
+    <div class="cloud">☁️</div>
+    <div class="cloud">☁️</div>
+    <div class="cloud">☁️</div>
 
-<div class="runway"></div>
+    <div class="runway"></div>
 
-<div class="container">
+    <div class="container" id="card">
+        <div id="pantallaPregunta">
+            <h1>¿Quieres irte de viaje conmigo si apruebo los examenes? ✈️🌍</h1>
+            <div class="buttons-container">
+                <button id="btnSi">¡SÍ, VAMOS!</button>
+                <button id="btnNo">No</button>
+            </div>
+        </div>
 
-<div id="pantallaPregunta">
+        <div id="pantallaFinal" class="hidden">
+            <div class="boarding">
+                <h2>🎫 TARJETA DE EMBARQUE</h2>
+                <p><strong>Destino:</strong> Aventuras infinitas</p>
+                <p><strong>Pasajeros:</strong> Tú & Yo</p>
+                <h1 style="margin: 15px 0 0 0; color: #2ecc71;">¡DESPEGAMOS!</h1>
+            </div>
+        </div>
+    </div>
 
-<h1>¿Quieres irte de viaje conmigo si apruebo los examenes? ✈️🌍</h1>
+    <div id="plane" class="plane">✈️</div>
+    <div id="countdown" class="countdown hidden"></div>
 
-<div class="buttons-container">
-<button id="btnSi">¡SÍ, VAMOS!</button>
-<button id="btnNo">No</button>
-</div>
+    <div id="cabin" class="cabin">
+        <h2>Abróchate el cinturón...<br>Estamos en vuelo</h2>
+        <div class="map">🌍 ✈️ 🌎</div>
+    </div>
 
-</div>
+    <audio id="takeoff" preload="auto">
+        <source src="https://cdn.pixabay.com/audio/2022/03/15/audio_115b9b9b39.mp3">
+    </audio>
 
-<div id="pantallaFinal" class="hidden">
+    <audio id="music" loop preload="auto">
+        <source src="https://cdn.pixabay.com/audio/2022/10/30/audio_946f6e6a17.mp3">
+    </audio>
 
-<div class="boarding">
-<h2>🎫 TARJETA DE EMBARQUE</h2>
-<p>Destino: Cualquier lugar del mundo</p>
-<p>Pasajeros: Tú & Yo</p>
-<h1>¡DESPEGAMOS!</h1>
-</div>
+    <script>
+        const btnSi = document.getElementById('btnSi');
+        const btnNo = document.getElementById('btnNo');
+        const plane = document.getElementById('plane');
+        const pPregunta = document.getElementById('pantallaPregunta');
+        const pFinal = document.getElementById('pantallaFinal');
+        const countdown = document.getElementById('countdown');
+        const cabin = document.getElementById('cabin');
+        const card = document.getElementById('card');
 
-</div>
+        const takeoff = document.getElementById('takeoff');
+        const music = document.getElementById('music');
 
-</div>
+        let escalaSi = 1, escalaNo = 1;
+        const frasesNo = [
+            "¿Estas segura?",
+            "¿Te quedarás en casa?",
+            "¿Ni aunque yo invite?",
+            "¡Piénsalo bien!",
+            "No tengas miedo",
+            "¡Di que sí, a lo loco!"
+        ];
+        let i = 0;
 
-<div id="plane" class="plane">✈️</div>
-<div id="countdown" class="countdown hidden"></div>
+        function smoke() {
+            const s = document.createElement("div");
+            s.className = "smoke";
+            const rect = plane.getBoundingClientRect();
+            s.style.left = rect.left + "px";
+            s.style.top = rect.top + "px";
+            document.body.appendChild(s);
+            setTimeout(() => s.remove(), 1000);
+        }
 
-<!-- cabina -->
-<div id="cabin" class="cabin">
-<h2>En vuelo…</h2>
-<div class="map">🌍 ✈️ 🌎</div>
-</div>
+        btnNo.onclick = () => {
+            escalaSi += 0.35;
+            // Limitamos la escala para que no tape todo en móviles pequeños
+            if(escalaSi > 6) escalaSi = 6; 
+            btnSi.style.transform = `scale(${escalaSi})`;
+            
+            escalaNo -= 0.15;
+            btnNo.style.transform = `scale(${escalaNo})`;
+            btnNo.innerText = frasesNo[i % frasesNo.length];
+            i++;
+            
+            if (escalaNo <= 0.2) btnNo.classList.add("hidden");
+        };
 
-<!-- sonidos -->
-<audio id="takeoff">
-<source src="https://cdn.pixabay.com/audio/2022/03/15/audio_115b9b9b39.mp3">
-</audio>
+        btnSi.onclick = () => {
+            // Ocultar la tarjeta para ver el despegue
+            card.style.opacity = "0";
+            card.style.pointerEvents = "none";
 
-<audio id="music" loop>
-<source src="https://cdn.pixabay.com/audio/2022/10/30/audio_946f6e6a17.mp3">
-</audio>
+            let c = 3;
+            countdown.classList.remove("hidden");
+            countdown.innerText = c;
 
-<script>
+            let timer = setInterval(() => {
+                c--;
+                if (c > 0) {
+                    countdown.innerText = c;
+                } else {
+                    clearInterval(timer);
+                    countdown.classList.add("hidden");
 
-const btnSi=document.getElementById('btnSi');
-const btnNo=document.getElementById('btnNo');
-const plane=document.getElementById('plane');
-const pPregunta=document.getElementById('pantallaPregunta');
-const pFinal=document.getElementById('pantallaFinal');
-const countdown=document.getElementById('countdown');
-const cabin=document.getElementById('cabin');
+                    takeoff.play().catch(e => console.log("Audio bloqueado"));
+                    plane.classList.add("fly");
 
-const takeoff=document.getElementById('takeoff');
-const music=document.getElementById('music');
+                    let smokeInterval = setInterval(smoke, 100);
 
-let escalaSi=1,escalaNo=1;
+                    setTimeout(() => {
+                        clearInterval(smokeInterval);
+                        cabin.style.opacity = 1;
+                        music.play().catch(e => console.log("Audio bloqueado"));
+                    }, 2500);
 
-const frasesNo=[
-"¿Estas segura?",
-"¿Te quedarás en casa?",
-"¿Ni aunque yo invite?",
-"¡Piénsalo bien!",
-"No tengas miedo",
-"¡Di que sí, a lo loco!"
-];
+                    setTimeout(() => {
+                        cabin.style.opacity = 0;
+                        pPregunta.classList.add("hidden");
+                        pFinal.classList.remove("hidden");
+                        card.style.opacity = "1";
+                        card.style.pointerEvents = "all";
 
-let i=0;
-
-function smoke(){
-const s=document.createElement("div");
-s.className="smoke";
-s.style.left=plane.getBoundingClientRect().left+"px";
-s.style.top=plane.getBoundingClientRect().top+"px";
-document.body.appendChild(s);
-setTimeout(()=>s.remove(),1200);
-}
-
-btnNo.onclick=()=>{
-escalaSi+=0.4;
-btnSi.style.transform=`scale(${escalaSi})`;
-escalaNo-=0.15;
-btnNo.style.transform=`scale(${escalaNo})`;
-btnNo.innerText=frasesNo[i%frasesNo.length];
-i++;
-if(escalaNo<=0.2)btnNo.classList.add("hidden");
-};
-
-btnSi.onclick=()=>{
-
-let c=3;
-countdown.classList.remove("hidden");
-countdown.innerText=c;
-
-let timer=setInterval(()=>{
-c--;
-
-if(c>0){
-countdown.innerText=c;
-}else{
-clearInterval(timer);
-countdown.classList.add("hidden");
-
-takeoff.play();
-plane.classList.add("fly");
-
-let smokeInterval=setInterval(smoke,120);
-
-setTimeout(()=>{
-clearInterval(smokeInterval);
-cabin.style.opacity=1;
-music.play();
-},2500);
-
-setTimeout(()=>{
-cabin.style.opacity=0;
-pPregunta.classList.add("hidden");
-pFinal.classList.remove("hidden");
-
-confetti({
-particleCount:200,
-spread:90,
-origin:{y:0.6}
-});
-},6000);
-
-}
-
-},800);
-
-};
-
-</script>
-
+                        confetti({
+                            particleCount: 150,
+                            spread: 70,
+                            origin: { y: 0.6 }
+                        });
+                    }, 6000);
+                }
+            }, 1000);
+        };
+    </script>
 </body>
 </html>
-
-
